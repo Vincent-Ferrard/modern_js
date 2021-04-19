@@ -24,6 +24,7 @@ app.post('/api/user/signup', (req, res) => {
     console.log(req.body);
     const user = new User({
         email: req.body.email,
+        username: req.body.username,
         password: req.body.password
     }).save((err, response) => {
         if (err)
