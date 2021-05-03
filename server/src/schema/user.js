@@ -19,7 +19,15 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         minlength: 6
-    }
+    },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room"
+    }],
+    status: {
+        type: Boolean,
+        required: true,
+    },
 });
 
 userSchema.pre('save', function(next) {
