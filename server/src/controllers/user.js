@@ -1,4 +1,5 @@
 const { User } = require('../schema/user');
+const jwt = require('jsonwebtoken');
 
 const UserController = {
     signup: (req, res) => {
@@ -19,13 +20,14 @@ const UserController = {
             if(!user)
                 res.json({message: 'Login failed, user not found'});
             else
-                user.compareP(req.body.password, (err, isMatch) => {
+                user.comparePassword(req.body.password, (err, isMatch) => {
                     if (err)
                         throw err;
                     else if (!isMatch)
                         return res.status(400).json({message: 'Wrong Password'});
                     else
-                        res.status(200).send('Logged in successfully');
+                        var token = jwt.sign({ email: user.email, username: user.username, iat: Math.floor(Date.now() / 1000) + ((60 * 60) * 2190) }, process.env.TOKEN_SECRET); //1h * le nombre d'heure en 3 mois
+                        return res.status(200).json({message: 'Logged in successfully', token: token});
                 })
         })
     },

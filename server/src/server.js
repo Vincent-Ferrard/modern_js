@@ -26,7 +26,6 @@ mongoose.connect(MONGOURL, options)
 
 app.use(bodyParser.json());
 
-
 const userRoutes = require('./routes/user');
 app.use('/api/user', userRoutes);
 
