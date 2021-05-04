@@ -42,3 +42,31 @@ export async function promoteUser(roomId, usernameToPromote) {
   });
   return await response.json();
 }
+
+export async function inviteUser(roomId, input) {
+  const response = await fetch("http://localhost:8080/api/rooms/" + roomId + "/members/add", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+    },
+    body : JSON.stringify({
+      input: input
+    })
+  });
+  return await response.json();
+}
+
+export async function createRoom(name) {
+  const response = await fetch("http://localhost:8080/api/rooms/create", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+    },
+    body : JSON.stringify({
+      name: name
+    })
+  });
+  return await response.json();
+}

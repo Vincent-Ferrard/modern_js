@@ -5,7 +5,13 @@ const { User } = require("../schema/user");
 const { Message } = require("../schema/message");
 
 exports.run = (server) => {
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true
+    }
+  });
 
   io.on('connection', (socket) => {
     console.log('a user is connected');
@@ -53,35 +59,29 @@ exports.run = (server) => {
       });
     });
 
-    // socket.on("seenBy", (roomId, username) => {
-    //   User.findOne({username: username}, (err, user) => {
-    //     if (user) {
-    //       console.log(user);
-    //       Message.findOneAndUpdate({room: roomId, seenBy: user.id}, {$pull: {seenBy: user.id}}).populate("sender seenBy", "username").then((message) => {
-    //         Message.findOneAndUpdate({room: roomId}, {$push: {seenBy: user.id}}, {sort: {$natural:-1}}).populate("sender seenBy", "username").then((lastMessage) => {
-    //           if (lastMessage) {
-    //             console.log(lastMessage);
-
-    //             if (message) {
-    //               message.seenBy = message.seenBy.filter((item) => item.id !== user.id);
-    //               console.log("message seenBy");
-    //               console.log(message.seenBy);
-    //             }
-    //             lastMessage.seenBy.push({_id: user.id, username: user.username});
-    //             console.log(lastMessage.seenBy);
+    socket.on("seenBy", (roomId, username) => {
+      User.findOne({username: username}, (err, user) => {
+        if (user) {
+          Message.findOneAndUpdate({room: roomId, seenBy: user.id}, {$pull: {seenBy: user.id}}).populate("sender seenBy", "username").then((message) => {
+            Message.findOneAndUpdate({room: roomId}, {$push: {seenBy: user.id}}, {sort: {$natural:-1}}).populate("sender seenBy", "username").then((lastMessage) => {
+              if (lastMessage && (message === null || message.id !== lastMessage.id)) {
+                if (message) {
+                  message.seenBy = message.seenBy.filter((item) => item.id !== user.id);
+                }
+                lastMessage.seenBy.push({_id: user.id, username: user.username});
                 
-    //             io.to(roomId).emit("seenBy", {
-    //               messageUpdate: message,
-    //               lastMessage: lastMessage,
-    //             });
-    //           }
-    //         });
-    //       }).catch((err) => {
+                io.to(roomId).emit("seenBy", {
+                  messageUpdate: message,
+                  lastMessage: lastMessage,
+                });
+              }
+            });
+          }).catch((err) => {
 
-    //       });
-    //     }
-    //   })
-    // });
+          });
+        }
+      })
+    });
 
     socket.on('chat', (roomId, username, msg) => {
       Room.findOne({_id: roomId}, (err, room) => {

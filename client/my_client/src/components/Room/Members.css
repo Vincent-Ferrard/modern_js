@@ -1,0 +1,47 @@
+/* Members */
+
+.members > a {
+  color: #b8bec4;
+}
+
+.members > .dropdown-menu {
+  background-color: #343940;
+  color: #ffffff;
+  border: 1px solid;
+}
+
+.members-dropdown-item {
+  color: #ffffff !important;
+}
+
+.members-dropdown-item:hover {
+  color: #343940 !important;
+}
+
+.members-dropdown-item:active {
+  background-color: #343940;
+}
+
+.show > .nav-link {
+  background-color: #343940 !important;
+  color: #ffffff !important;
+}
+
+.status-icon {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: #e38968;
+  margin-right: 6px;
+}
+
+.status-icon.connected {
+  background-color: #86bb71;
+}
+
+#add-members-button {
+  position: fixed;
+  bottom: 0;
+  margin: 1em;
+}

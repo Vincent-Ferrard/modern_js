@@ -1,9 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import {Container, Row, Col, Card, Form, Button, InputGroup, FormControl } from "react-bootstrap";
+import {Container, Row, Col, InputGroup, FormControl } from "react-bootstrap";
 import { io } from "socket.io-client";
 
-import Sidebar from './Sidebar.jsx';
 import Rooms from './Rooms.jsx';
 import Members from './Members.jsx';
 
@@ -13,7 +12,7 @@ import './Room.css';
 
 const USER = "20Cents";
 
-let socket = io.connect("http://127.0.0.1:8080", {query: "username=" + USER});
+let socket = io.connect("http://localhost:8080", {withCredentials: true, query: "username=" + USER});
 
 export default class Room extends React.Component {
  
@@ -40,14 +39,17 @@ export default class Room extends React.Component {
       
       const res3 = await getMessages(this.state.roomId);
       console.log(res3.messages);
-      if ("messages" in res3)
+      if ("messages" in res3) {
         this.setState({messages: res3.messages});
+        this.scrollToBottom("instant");
+      }
 
       socket.emit('join room', this.state.roomId);
 
       socket.on('chat', (message) => {
         this.setState({messages: {...this.state.messages, [Object.keys(this.state.messages).length]: message}});
-        this.scrollToBottom();
+        this.scrollToBottom("smooth");
+        this.setLastMessageRead();
       });
 
       socket.on("promote user", (members) => {
@@ -56,21 +58,24 @@ export default class Room extends React.Component {
         }
       });
 
-      // socket.on("seenBy", (messages) => {
-      //   console.log(messages);
+      socket.on("seenBy", (messages) => {
+        console.log(messages);
 
-      //   let key = Object.keys(this.state.messages).find((key) => this.state.messages[key]._id === messages.messageUpdate._id);
-      //   if (messages.messageUpdate) {
-      //     const copyMessage = this.state.messages[key];
-      //     copyMessage.seenBy = messages.messageUpdate.seenBy;
-      //     this.setState({messages: {...this.state.messages, [key]: copyMessage}});
-      //   }
-      //   if (messages.lastMessage) {
-      //     const copyLastMessage = this.state.messages[Object.keys(this.state.messages).length - 1];
-      //     copyLastMessage.seenBy = messages.lastMessage.seenBy;
-      //     this.setState({messages: {...this.state.messages, [Object.keys(this.state.messages).length - 1]: copyLastMessage}});
-      //   }
-      // });
+        if (messages.messageUpdate) {
+          let key = Object.keys(this.state.messages).find((key) => this.state.messages[key]._id === messages.messageUpdate._id);
+  
+          if (this.state.messages[key]) {
+            const copyMessage = this.state.messages[key];
+            copyMessage.seenBy = messages.messageUpdate.seenBy;
+            this.setState({messages: {...this.state.messages, [key]: copyMessage}});
+          }
+        }
+        if (messages.lastMessage) {
+          const copyLastMessage = this.state.messages[Object.keys(this.state.messages).length - 1];
+          copyLastMessage.seenBy = messages.lastMessage.seenBy;
+          this.setState({messages: {...this.state.messages, [Object.keys(this.state.messages).length - 1]: copyLastMessage}});
+        }
+      });
 
       socket.on('user connection', (user) => {
         console.log("user connection");
@@ -102,7 +107,6 @@ export default class Room extends React.Component {
           this.setState({members: copy});
         }
       });
-      // this.setLastMessageRead();
     }
   }
 
@@ -115,8 +119,9 @@ export default class Room extends React.Component {
     }
   }
 
-  scrollToBottom = () => {
-    this.messageList.current.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+  scrollToBottom = (behavior) => {
+    if (this.messageList)
+      this.messageList.current.scrollIntoView({behavior: behavior, block: "end", inline: "nearest"});
   }
 
   promoteUserToOwner = async (event, usernameToPromote) => {
@@ -129,8 +134,24 @@ export default class Room extends React.Component {
     }
   }
 
+  toInvite = (event) => {
+    event.preventDefault();
+    this.props.history.push("/rooms/" + this.state.roomId + "/invite");
+  }
+
+  toRoomCreation = (event) => {
+    event.preventDefault();
+    this.props.history.push("/room/create");
+  }
+
   setLastMessageRead = () => {
     socket.emit("seenBy", this.state.roomId, USER);
+  }
+
+  disconnect = (event) => {
+    event.preventDefault();
+    localStorage.setItem("token", null);
+    this.props.history.push("/");
   }
 
   render() {
@@ -140,34 +161,45 @@ export default class Room extends React.Component {
       <>
         { roomId ? (
           <Container fluid>
-            <Row>
+            <Row ref={this.messageList}>
                 <Col xs={2} id="sidebar-wrapper">      
-                  <Rooms rooms={rooms} />
+                  <Rooms roomId={roomId} rooms={rooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect} />
                 </Col>
-                <Col xs={8} id="page-content-wrapper" ref={this.messageList}>
+                <Col xs={8} id="page-content-wrapper" >
                   {
                     Object.keys(messages).map(key => {
                       return (
-                      <p key={messages[key]._id}><b>{messages[key].sender.username}</b> --- {new Date(messages[key].createdAt).toLocaleDateString()}<br/>{messages[key].content}<br/></p>
+                        <div key={messages[key]._id} className="message">
+                          <p><b>{messages[key].sender.username}</b>&nbsp;&nbsp;&nbsp;<span className="message-date">{new Date(messages[key].createdAt).toLocaleDateString()}</span></p>
+                          <p className="message-content">{messages[key].content}</p>
+                          {messages[key].seenBy.length > 0 ? (
+                            <p className="text-right message-seenBy"> Vu par <i>{
+                              messages[key].seenBy.map((element) => element.username + " ")
+                            }</i></p>
+                            ) : <></>
+                          }
+                        </div>
                       );
                     })
                   }
                 </Col>
                 <Col xs={2} id="sidebar-wrapper">
-                  <Members roomId={roomId} members={members} promoteUserToOwner={this.promoteUserToOwner} />     
+                  <Members roomId={roomId} members={members} promoteUserToOwner={this.promoteUserToOwner} toInvite={this.toInvite} />     
                 </Col>
             </Row>
             <Row>
               <Col xs={12} id="input-message">
                 <InputGroup className="mb-3">
                   <FormControl
+                    id="input-form"
                     placeholder="Send a message..."
                     value={this.state.message}
                     onChange={(event) => this.setState({message: event.target.value})}
+                    onKeyDown={(event) => event.keyCode == 13 ? this.sendMessage(event) : ''}
                   />
-                  <InputGroup.Append>
-                    <Button variant="outline-secondary" onClick={(event) => this.sendMessage(event)}>Send</Button>
-                  </InputGroup.Append>
+                  {/* <InputGroup.Append>
+                    <Button variant="outline-light" onClick={(event) => this.sendMessage(event)}>Send</Button>
+                  </InputGroup.Append> */}
                 </InputGroup>
               </Col>
             </Row>
@@ -176,7 +208,7 @@ export default class Room extends React.Component {
           <Container fluid>
               <Row>
                   <Col xs={2} id="sidebar-wrapper">      
-                    <Rooms rooms={rooms} />
+                    <Rooms rooms={rooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect}/>
                   </Col>
                   <Col  xs={10} id="page-content-wrapper"></Col>
               </Row>
