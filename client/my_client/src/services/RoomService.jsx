@@ -1,8 +1,21 @@
-export async function getRooms() {
-  const response = await fetch("http://localhost:8080/api/user/20Cents/rooms", {
+export async function getUserData() {
+  const response = await fetch("http://localhost:8080/api/user/data", {
     method: 'GET',
-    headers: {'Content-Type': 'application/json'},
-    // body: JSON.stringify({user: data})
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer " + localStorage.getItem("token"),
+    },
+  });
+  return await response.json();
+}
+
+export async function getRooms(username) {
+  const response = await fetch("http://localhost:8080/api/user/" + username + "/rooms", {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer " + localStorage.getItem("token"),
+    },
   });
   return await response.json();
 }
@@ -12,7 +25,7 @@ export async function getMembers(roomId) {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+      "Authorization": "Bearer " + localStorage.getItem("token"), //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
     }
   });
   return await response.json();
@@ -23,7 +36,7 @@ export async function getMessages(roomId) {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+      "Authorization": "Bearer " + localStorage.getItem("token"),
     }
   });
   return await response.json();
@@ -34,7 +47,7 @@ export async function promoteUser(roomId, usernameToPromote) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+      "Authorization": "Bearer " + localStorage.getItem("token"),
     },
     body : JSON.stringify({
       username: usernameToPromote
@@ -48,7 +61,7 @@ export async function inviteUser(roomId, input) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+      "Authorization": "Bearer " + localStorage.getItem("token"),
     },
     body : JSON.stringify({
       input: input
@@ -62,11 +75,22 @@ export async function createRoom(name) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs"
+      "Authorization": "Bearer " + localStorage.getItem("token")
     },
     body : JSON.stringify({
       name: name
     })
+  });
+  return await response.json();
+}
+
+export async function acceptInvite(roomId, inviteToken) {
+  const response = await fetch("http://localhost:8080/api/rooms/" + roomId + "/invitation/accept?token=" + inviteToken, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer " + localStorage.getItem("token"),
+    }
   });
   return await response.json();
 }

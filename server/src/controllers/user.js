@@ -31,6 +31,9 @@ const UserController = {
                 })
         })
     },
+    data: (req, res) => {
+        res.json(req.user);
+    },
     allRooms: (req, res) => {
         User.findOne({username: req.params.username}).populate("rooms", "name")
         .then((user) => {

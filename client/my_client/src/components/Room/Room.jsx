@@ -6,13 +6,15 @@ import { io } from "socket.io-client";
 import Rooms from './Rooms.jsx';
 import Members from './Members.jsx';
 
-import { getRooms, getMembers, getMessages, promoteUser } from '../../services/RoomService.jsx';
+import { getRooms, getMembers, getMessages, promoteUser, getUserData } from '../../services/RoomService.jsx';
 
 import './Room.css';
 
 const USER = "20Cents";
 
-let socket = io.connect("http://localhost:8080", {withCredentials: true, query: "username=" + USER});
+let socket;
+
+let connectUser;
 
 export default class Room extends React.Component {
  
@@ -29,7 +31,17 @@ export default class Room extends React.Component {
   }
 
   async componentDidMount() {
-    const res = await getRooms();
+    if (!connectUser) {
+      connectUser = await getUserData();
+      if (!connectUser.email && !connectUser.username)
+        throw "Invalid user";
+    }
+    
+    console.log(connectUser);
+    if (!socket)
+      socket = io.connect("http://localhost:8080", {withCredentials: true, query: "username=" + connectUser.username})
+
+    const res = await getRooms(connectUser.username);
     if ("rooms" in res)
       this.setState({rooms: res.rooms});
     if (this.state.roomId) {
@@ -48,8 +60,8 @@ export default class Room extends React.Component {
 
       socket.on('chat', (message) => {
         this.setState({messages: {...this.state.messages, [Object.keys(this.state.messages).length]: message}});
-        this.scrollToBottom("smooth");
         this.setLastMessageRead();
+        this.scrollToBottom("smooth");
       });
 
       socket.on("promote user", (members) => {
@@ -114,13 +126,13 @@ export default class Room extends React.Component {
     event.preventDefault();
     if (this.state.message) {
       console.log("send message");
-      socket.emit('chat', this.state.roomId, USER, this.state.message);
+      socket.emit('chat', this.state.roomId, connectUser.username, this.state.message);
       this.setState({message: ""});
     }
   }
 
   scrollToBottom = (behavior) => {
-    if (this.messageList)
+    if (this.messageList.current)
       this.messageList.current.scrollIntoView({behavior: behavior, block: "end", inline: "nearest"});
   }
 
@@ -145,7 +157,7 @@ export default class Room extends React.Component {
   }
 
   setLastMessageRead = () => {
-    socket.emit("seenBy", this.state.roomId, USER);
+    socket.emit("seenBy", this.state.roomId, connectUser.username);
   }
 
   disconnect = (event) => {
@@ -184,7 +196,7 @@ export default class Room extends React.Component {
                   }
                 </Col>
                 <Col xs={2} id="sidebar-wrapper">
-                  <Members roomId={roomId} members={members} promoteUserToOwner={this.promoteUserToOwner} toInvite={this.toInvite} />     
+                  <Members roomId={roomId} connectUser={connectUser} members={members} promoteUserToOwner={this.promoteUserToOwner} toInvite={this.toInvite} />     
                 </Col>
             </Row>
             <Row>
@@ -195,7 +207,7 @@ export default class Room extends React.Component {
                     placeholder="Send a message..."
                     value={this.state.message}
                     onChange={(event) => this.setState({message: event.target.value})}
-                    onKeyDown={(event) => event.keyCode == 13 ? this.sendMessage(event) : ''}
+                    onKeyDown={(event) => event.keyCode === 13 ? this.sendMessage(event) : ''}
                   />
                   {/* <InputGroup.Append>
                     <Button variant="outline-light" onClick={(event) => this.sendMessage(event)}>Send</Button>

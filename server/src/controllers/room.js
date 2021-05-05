@@ -126,7 +126,7 @@ const RoomController = {
                           to: user.email,
                           from: process.env.SENDER_MAIL,
                           subject: 'Invitation to ' + room.name + " by " + me.username,
-                          html: '<a href="http://localhost:8080/api/rooms/' + room.name + '/invitation/accept?token=' + token + '" target="_blank">Accept invitation</a><br/><a href="http://localhost:8080/api/rooms/' + room.name + '/invitation/decline?token=' + token + '" target="_blank">Decline invitation</a>',
+                          html: '<a href="http://localhost:3000/rooms/' + room.id + '/invite/accept?token=' + token + '" target="_blank">Accept invitation</a><br/><a href="http://localhost:3000/rooms/' + room.id + '/invite/decline?token=' + token + '" target="_blank">Decline invitation</a>',
                         }).then((response) => {
                           res.status(200).json({message: "An invitation has been sent."});
                         }).catch((err) => {
