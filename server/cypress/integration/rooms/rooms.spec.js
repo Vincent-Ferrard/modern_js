@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-context('Login', () => {
+context('Rooms', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/rooms', {
       onBeforeLoad: function (window) {

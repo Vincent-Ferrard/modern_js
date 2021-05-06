@@ -31,7 +31,7 @@ export default class Members extends React.Component {
                     } className="members">
                       { this.props.members.owner.username === this.props.connectUser.username ? (
                         <>
-                          <NavDropdown.Item key={this.props.members.members[key]._id + "-promote"} className="members-dropdown-item" onClick={(event) => this.props.promoteUserToOwner(event, this.props.members.members[key].username)}>Promote to owner</NavDropdown.Item>
+                          <NavDropdown.Item key={this.props.members.members[key]._id + "-promote"} className="promote members-dropdown-item" onClick={(event) => this.props.promoteUserToOwner(event, this.props.members.members[key].username)}>Promote to owner</NavDropdown.Item>
                           <NavDropdown.Item key={this.props.members.members[key]._id + "-message"} className="members-dropdown-item">Send a message</NavDropdown.Item>
                         </>
                       ) : (

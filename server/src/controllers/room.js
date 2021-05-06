@@ -50,8 +50,6 @@ const RoomController = {
   getMessages: (req, res) => {
     Message.find({room: req.params.roomId}).populate("sender seenBy", "username")
     .then((messages) => {
-      console.log(messages);
-      messages.forEach((e) => console.log(e.seenBy));
       if (!messages)
         res.status(400).send(err);
       else
@@ -202,7 +200,7 @@ const RoomController = {
                         if (err)
                           res.status(400).send(err);
                         else
-                          res.json({message: user.username + " has been added to the room " + room.name + "."});
+                          res.json({message: "You have join the room"});
                       })
                     }
                   })

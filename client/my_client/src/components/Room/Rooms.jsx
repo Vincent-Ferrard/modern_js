@@ -29,7 +29,7 @@ export default class Rooms extends React.Component {
         {oldRooms}
         <div id="create-room-button">
           <Row>
-            <Button variant="outline-light" className="mr-2" onClick={(event) => this.props.toRoomCreation(event)}>Create a room</Button>
+            <Button variant="outline-light" className="create-room mr-2" onClick={(event) => this.props.toRoomCreation(event)}>Create a room</Button>
             <Button variant="outline-danger" className="ml-2" onClick={(event) => this.props.disconnect(event)}>Log out</Button>
           </Row>
         </div>

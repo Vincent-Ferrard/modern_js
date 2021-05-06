@@ -31,15 +31,19 @@ export default class Room extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    if (socket && socket.connected)
+      socket.disconnect();
+  }
+
   async componentDidMount() {
     if (!connectUser) {
       connectUser = await getUserData();
       if (!connectUser.email && !connectUser.username)
-        throw "Invalid user";
+        throw new Error("Invalid user");
     }
     
-    console.log(connectUser);
-    if (!socket)
+    if (!socket || !socket.connected)
       socket = io.connect("http://localhost:8080", {withCredentials: true, query: "username=" + connectUser.username})
 
     const res = await getRooms(connectUser.username);
@@ -176,6 +180,7 @@ export default class Room extends React.Component {
   disconnect = (event) => {
     event.preventDefault();
     localStorage.removeItem("token");
+    socket.disconnect();
     this.props.history.push("/");
   }
 

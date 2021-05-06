@@ -18,12 +18,12 @@ context('Login', () => {
   });
 
   it("Try to connect with a false account.", function() {
-    cy.get("input[name='email']", { delay: 100 })
-      .type("hello@hello.com")
+    cy.get("input[name='email']")
+      .type("hello@hello.com", { delay: 100 })
       .should("have.value", "hello@hello.com");
     
-    cy.get("input[name='password']", { delay: 100 })
-      .type("hello")
+    cy.get("input[name='password']")
+      .type("hello", { delay: 100 })
       .should("have.value", "hello");
 
     cy.get("button")
@@ -34,12 +34,12 @@ context('Login', () => {
   });
 
   it("Try to connect with a real account.", function() {
-    cy.get("input[name='email']", { delay: 100 })
-      .type("vincent.ferrard@epitech.eu")
+    cy.get("input[name='email']")
+      .type("vincent.ferrard@epitech.eu", { delay: 100 })
       .should("have.value", "vincent.ferrard@epitech.eu");
     
-    cy.get("input[name='password']", { delay: 100 })
-      .type("test")
+    cy.get("input[name='password']")
+      .type("test", { delay: 100 })
       .should("have.value", "test");
 
     cy.get("button")
