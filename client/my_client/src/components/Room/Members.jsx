@@ -42,7 +42,8 @@ export default class Members extends React.Component {
                 })
               }
               <div id="add-members-button">
-                <Button variant="outline-light" onClick={(event) => this.props.toInvite(event)}>Add a member</Button>
+                <Button variant="outline-light" className="right-margin" onClick={(event) => this.props.toInvite(event)}>Add a member</Button>
+                <Button variant="outline-danger" onClick={(event) => this.props.toLeave(event)}>Leave group</Button>
               </div>
             </div>
           ) : ("")

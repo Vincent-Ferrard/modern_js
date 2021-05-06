@@ -20,6 +20,17 @@ export async function getRooms(username) {
   return await response.json();
 }
 
+export async function removeMember(roomId) {
+  const response = await fetch("http://localhost:8080/api/rooms/" + roomId + "/leave", {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer " + localStorage.getItem("token"),
+    }
+  });
+  return await response.json();
+}
+
 export async function getMembers(roomId) {
   const response = await fetch("http://localhost:8080/api/rooms/" + roomId + "/members", {
     method: 'GET',

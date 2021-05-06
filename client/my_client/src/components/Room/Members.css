@@ -45,3 +45,7 @@
   bottom: 0;
   margin: 1em;
 }
+
+.right-margin {
+  margin-right: 15px;
+}

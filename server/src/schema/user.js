@@ -24,10 +24,18 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Room"
     }],
+    oldRooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room"
+    }],
     status: {
         type: Boolean,
         default: false,
     },
+    // resetLink: {
+    //     data: String,
+    //     default: ''
+    // }
 });
 
 userSchema.pre('save', function(next) {

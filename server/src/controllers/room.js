@@ -6,6 +6,7 @@ const { User } = require("../schema/user");
 const { transporter } = require('../services/nodemail');
 
 const Str = require('@supercharge/strings');
+const { resolveContent } = require("nodemailer/lib/shared");
 
 const RoomController = {
   create: (req, res) => {
@@ -140,6 +141,34 @@ const RoomController = {
         })
       }
     })
+  },
+
+  removeMember: (req, res) => {
+    console.log(req.user);
+    User.findOne({
+      email: req.user.email,
+    }, (err, user) => {
+      if (!user)
+        res.json({message: "This user does not exist."});
+      else {
+        Room.findOne({
+          _id: req.params.roomId
+        }, (err, room) => {
+          if (!room)
+            res.status(400).send(err);
+          else {
+            if (room.owner._id == user.id) {
+              idTmp = room.members[0]._id;
+              room.updateOne({owner: idTmp, $pull: {members: idTmp}}, (err, res) => (console.log(res)));
+            } else {
+              room.updateOne({$pull: {members: user.id}}, (err, res) => (console.log(res)));
+            }
+            user.updateOne({$pull: {rooms: room._id}, $push: {oldRooms: room._id}}, (err, res) => {console.log(res)});
+            res.json({message: "Succed"});
+          }
+        });
+      }
+    });
   },
 
   acceptInvitation: (req, res) => {

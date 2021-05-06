@@ -26,3 +26,11 @@
   bottom: 0;
   margin: 1em;
 }
+
+.historic {
+  text-align: center;
+  color: lightgrey;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  text-decoration: underline;
+}

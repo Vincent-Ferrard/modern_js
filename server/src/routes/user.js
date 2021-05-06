@@ -8,6 +8,7 @@ router.post('/signup', userCtrl.signup);
 router.post('/signin', userCtrl.signin);
 
 router.get('/:username/rooms', authenticateToken, userCtrl.allRooms);
+//router.get('/:username/status', authenticateToken, userCtrl.allOldRooms)
 router.post('/:username/status', userCtrl.allRooms);
 
 router.get('/data', authenticateToken, userCtrl.data);

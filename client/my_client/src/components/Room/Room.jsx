@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 import Rooms from './Rooms.jsx';
 import Members from './Members.jsx';
 
-import { getRooms, getMembers, getMessages, promoteUser, getUserData } from '../../services/RoomService.jsx';
+import { getRooms, removeMember, getMembers, getMessages, promoteUser, getUserData } from '../../services/RoomService.jsx';
 
 import './Room.css';
 
@@ -24,6 +24,7 @@ export default class Room extends React.Component {
     this.state = {
       roomId: props.match.params.roomId ?? null,
       rooms: {},
+      oldRooms: {},
       members: {},
       messages: {},
       message: ""
@@ -44,6 +45,8 @@ export default class Room extends React.Component {
     const res = await getRooms(connectUser.username);
     if ("rooms" in res)
       this.setState({rooms: res.rooms});
+    if ("oldRooms" in res)
+      this.setState({oldRooms: res.oldRooms})
     if (this.state.roomId) {
       const res2 = await getMembers(this.state.roomId);
       if ("owner" in res2 && "members" in res2)
@@ -151,6 +154,16 @@ export default class Room extends React.Component {
     this.props.history.push("/rooms/" + this.state.roomId + "/invite");
   }
 
+  toLeave = (event) => {
+    event.preventDefault();
+    removeMember(this.state.roomId).then((respond) => {
+      console.log("on va attendre");
+      setTimeout([this.props.history.push("/rooms")], 1000);
+      console.log("on a attendu");
+    });
+    //this.props.history.push("/rooms/" + this.state.roomId + "/leave");
+  }
+
   toRoomCreation = (event) => {
     event.preventDefault();
     this.props.history.push("/room/create");
@@ -167,7 +180,7 @@ export default class Room extends React.Component {
   }
 
   render() {
-    const { roomId, rooms, members, messages } = this.state;
+    const { roomId, rooms, oldRooms, members, messages } = this.state;
 
     return (
       <>
@@ -175,7 +188,7 @@ export default class Room extends React.Component {
           <Container fluid>
             <Row ref={this.messageList}>
                 <Col xs={2} id="sidebar-wrapper">      
-                  <Rooms roomId={roomId} rooms={rooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect} />
+                  <Rooms roomId={roomId} rooms={rooms} oldRooms={oldRooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect} />
                 </Col>
                 <Col xs={8} id="page-content-wrapper" >
                   {
@@ -196,7 +209,7 @@ export default class Room extends React.Component {
                   }
                 </Col>
                 <Col xs={2} id="sidebar-wrapper">
-                  <Members roomId={roomId} connectUser={connectUser} members={members} promoteUserToOwner={this.promoteUserToOwner} toInvite={this.toInvite} />     
+                  <Members roomId={roomId} connectUser={connectUser} members={members} promoteUserToOwner={this.promoteUserToOwner} toInvite={this.toInvite} toLeave={this.toLeave}/>     
                 </Col>
             </Row>
             <Row>
@@ -220,7 +233,7 @@ export default class Room extends React.Component {
           <Container fluid>
               <Row>
                   <Col xs={2} id="sidebar-wrapper">      
-                    <Rooms rooms={rooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect}/>
+                    <Rooms rooms={rooms} oldRooms={oldRooms} toRoomCreation={this.toRoomCreation} disconnect={this.disconnect}/>
                   </Col>
                   <Col  xs={10} id="page-content-wrapper"></Col>
               </Row>

@@ -12,5 +12,6 @@ router.get('/:roomId/invitation/accept', roomCtrl.acceptInvitation);
 router.get('/:roomId/invitation/decline', roomCtrl.declineInvitation);
 router.get('/:roomId/members', authenticateToken, roomCtrl.allMembers);
 router.post('/:roomId/promote', authenticateToken, roomCtrl.promoteUserToOwner);
+router.get('/:roomId/leave', authenticateToken, roomCtrl.removeMember);
 
 module.exports = router;
