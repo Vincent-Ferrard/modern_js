@@ -8,17 +8,24 @@ export default class AddRoom extends React.Component {
     super(props);
     this.state = {
       name: "",
-      errorMessage: "",
+      success: "",
+      error: ""
     }
   }
 
   submit = async (event) => {
     event.preventDefault();
-    const res = await createRoom(this.state.name);
-    console.log(res);
-    this.setState({name: ""});
-    if (res.message)
-      this.setState({errorMessage: res.message});
+    this.setState({success: "", error: ""});
+    if (this.state.name !== "") {
+      const res = await createRoom(this.state.name);
+      console.log(res);
+      this.setState({name: ""});
+      if (res.message)
+        this.setState({success: res.message});
+      else if (res.error)
+        this.setState({error: res.error});
+    } else
+      this.setState({error: "All fields have to be completed."});
   }
 
   render() {
@@ -33,8 +40,8 @@ export default class AddRoom extends React.Component {
                       <label>Room Name</label>
                       <input name="name" className="form-control" placeholder="Name" type="text" value={this.state.name} onChange={(event) => this.setState({name: event.target.value})}/>
                   </div>
-                  {/* {this.state.errorMessage === 'Wrong informations' ? (<div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>) : <></>*/}
-                  {this.state.errorMessage !== '' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>}
+                  { this.state.error !== '' ? (<div className="alert alert-danger" role="alert">{this.state.error}</div>) : <></> }
+                  { this.state.success !== '' ? (<div className="alert alert-success" role="alert">{this.state.success}</div>) : <></> }
                   <div className="form-group">
                       <button type="submit" className="btn btn-primary btn-block"> Create room </button>
                   </div>                                                           

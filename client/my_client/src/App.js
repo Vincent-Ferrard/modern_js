@@ -1,13 +1,10 @@
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { Room, Login, AddMember, AddRoom, Accept } from './components';
+import { Room, Login, AddMember, AddRoom, Accept, Decline } from './components';
 
 import RequireAuth from './middlewares/RequireAuth.jsx';
 import IsNotAuth from './middlewares/IsNotAuth.jsx';
-
-let socket;
-let connectUser;
 
 function App() {
   return (
@@ -18,7 +15,7 @@ function App() {
       <Route exact path="/rooms/:roomId" component={RequireAuth(Room)} />
       <Route exact path="/rooms/:roomId/invite" component={RequireAuth(AddMember)} />
       <Route exact path="/rooms/:roomId/invite/accept" component={RequireAuth(Accept)} />
-      <Route exact path="/rooms/:roomId/invite/decline" component={RequireAuth(AddMember)} />
+      <Route exact path="/rooms/:roomId/invite/decline" component={RequireAuth(Decline)} />
       <Route exact path="/login" component={IsNotAuth(Login)} />
     </Router>
   );

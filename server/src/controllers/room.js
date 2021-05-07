@@ -14,7 +14,7 @@ const RoomController = {
       email: req.user.email
     }, (err, user) => {
       if (!user)
-        res.status(400).send(err);
+        res.status(400).json({error: "Can not find your account."});
       else {
         const room = new Room({
           name: req.body.name,
@@ -23,13 +23,13 @@ const RoomController = {
         });
         room.save((err, response) => {
           if (err)
-            res.status(400).send(err);
+            res.status(400).json({error: "An error happened."});
           else
-            user.update({$push: {rooms: room.id }}, (err, response) => {
+            user.updateOne({$push: {rooms: room.id }}, (err, response) => {
               if (err)
-                  res.status(400).send(err);
+                  res.status(400).json({error: "An error happened."});
               else
-                res.status(200).send(response);
+                res.status(200).json({message: "The room has been created."});
             })
         })
       }
@@ -78,7 +78,7 @@ const RoomController = {
 
     User.findOne(params, (err, user) => {
       if (!user)
-        res.json({message: "This user does not exist."});
+        res.json({error: "This user does not exist."});
       else {
         User.findOne({
           email: req.user.email,
@@ -96,7 +96,7 @@ const RoomController = {
                 if (!room)
                   res.status(400).send(err);
                 else {
-                  user.update({$push: {rooms: room.id }}, (err, response) => {
+                  user.updateOne({$push: {rooms: room.id }}, (err, response) => {
                     if (err)
                       res.status(400).send(err);
                     else {
@@ -147,7 +147,7 @@ const RoomController = {
       email: req.user.email,
     }, (err, user) => {
       if (!user)
-        res.json({message: "This user does not exist."});
+        res.json({error: "This user does not exist."});
       else {
         Room.findOne({
           _id: req.params.roomId
@@ -182,7 +182,7 @@ const RoomController = {
             email: invitation.user.email
           }, (err, user) => {
             if (!user)
-              res.json({message: "This user does not exist."});
+              res.json({error: "This user does not exist."});
             else {
               Room.findOneAndUpdate({
                 _id: req.params.roomId
@@ -192,7 +192,7 @@ const RoomController = {
                 if (!room)
                   res.status(400).send(err);
                 else {
-                  user.update({$push: {rooms: room.id }}, (err, response) => {
+                  user.updateOne({$push: {rooms: room.id }}, (err, response) => {
                     if (err)
                       res.status(400).send(err);
                     else {
@@ -200,7 +200,7 @@ const RoomController = {
                         if (err)
                           res.status(400).send(err);
                         else
-                          res.json({message: "You have join the room"});
+                          res.json({message: "You have join the room."});
                       })
                     }
                   })
@@ -228,7 +228,7 @@ const RoomController = {
             email: invitation.user.email
           }, (err, user) => {
             if (!user)
-              res.json({message: "This user does not exist."});
+              res.json({error: "This user does not exist."});
             else {
               Room.findOneAndUpdate({
                 _id: req.params.roomId
@@ -242,7 +242,7 @@ const RoomController = {
                     if (err)
                       res.status(400).send(err);
                     else
-                      res.json({message: user.username + " has declined the invitation to the room " + room.name + "."});
+                      res.json({message: "You have declined the invitation to the room."});
                   })
                 }
               })
@@ -259,7 +259,7 @@ const RoomController = {
     Room.findOne({_id: req.params.roomId}).populate("members owner", "username status")
     .then((room) => {
       if (!room)
-        res.json({message: "This room does not exist."});
+        res.json({error: "This room does not exist."});
       else
         res.json({
           members: room.members,
@@ -273,18 +273,18 @@ const RoomController = {
   promoteUserToOwner: (req, res) => {
     Room.findOne({_id: req.params.roomId}, (err, room) => {
       if (!room)
-        res.status(400).json({message: "This room does not exist."});
+        res.status(400).json({error: "This room does not exist."});
       else {
         User.findOne({username: req.user.username}, (err, user) => {
           if (!user)
-            res.status(400).json({message: "Can not find your account."});
+            res.status(400).json({error: "Can not find your account."});
           else {
             if (room.owner._id != user.id)
-              res.status(400).json({message: "You are not the room's owner. You can't promote a user."});
+              res.status(400).json({error: "You are not the room's owner. You can't promote a user."});
             else {
               User.findOne({username: req.body.username}, (err, userToPromote) => {
                 if (!userToPromote)
-                  res.status(400).json({message: "The user you want to promote does not exist."});
+                  res.status(400).json({error: "The user you want to promote does not exist."});
                 else {
                   let members = room.members.filter((element) => element != userToPromote.id);
                   members.push(user.id);
@@ -292,7 +292,7 @@ const RoomController = {
                     if (err)
                       res.status(400).json(err);
                     else
-                      res.json({message: 'The user ' + userToPromote.username + ' has been promoted.'});
+                      res.json({message: 'The user has been promoted'});
                   });
                 }
               });

@@ -74,3 +74,10 @@ body {
   font-size: 1em;
   color: #72767d;
 }
+
+.alert-message {
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+}

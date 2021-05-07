@@ -9,6 +9,18 @@ context('Rooms', () => {
     });
   });
 
+  it("Try to create a new room without a name", function() {
+    cy.get(".create-room")
+      .first()
+      .click();
+    
+    cy.get("button[type='submit']")
+      .click();
+
+    cy.get(".alert-danger")
+      .should("contain", "All fields have to be completed.");
+  });
+
   it("Try to create a new room", function() {
     cy.get(".create-room")
       .first()
@@ -23,13 +35,8 @@ context('Rooms', () => {
     cy.get("button[type='submit']")
       .click();
 
-    cy.get('button')
-      .first()
-      .click();
-    
-    cy.get(".rooms > a")
-      .last()
-      .should("contain", name);
+    cy.get(".alert-success")
+      .should("contain", "The room has been created");
   });
 });
 

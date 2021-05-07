@@ -105,3 +105,14 @@ export async function acceptInvite(roomId, inviteToken) {
   });
   return await response.json();
 }
+
+export async function declineInvite(roomId, inviteToken) {
+  const response = await fetch("http://localhost:8080/api/rooms/" + roomId + "/invitation/decline?token=" + inviteToken, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      "Authorization": "Bearer " + localStorage.getItem("token"),
+    }
+  });
+  return await response.json();
+}

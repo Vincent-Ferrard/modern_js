@@ -1,13 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-require('dotenv').config();
+// require('dotenv').config();
 
 const MONGOURL = 'mongodb+srv://admin:AAleUri78rYmkfzI@cluster.zy0jq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: true, //
+    useFindAndModify: false, //
     useCreateIndex: true
 }
 
@@ -49,8 +49,44 @@ const socketIo = require('./services/socketio');
 
 socketIo.run(server);
 
-const port = process.env.PORT || 8080;
+// const port = process.env.PORT || 8080;
 
-server.listen(port, () => {
-    console.log(`server running on ${port}`);
-})
+// server.listen(port, () => {
+//     console.log(`server running on ${port}`);
+// })
+
+
+// const cluster = require("cluster");
+// const http = require("http");
+// const numCPUs = require("os").cpus().length;
+// const { setupMaster } = require("@socket.io/sticky");
+
+// if (cluster.isMaster) {
+//   console.log(`Master ${process.pid} is running`);
+
+//   const httpServer = http.createServer();
+//   setupMaster(httpServer, {
+//     loadBalancingMethod: "least-connection", // either "random", "round-robin" or "least-connection"
+//   });
+
+//   const port = process.env.PORT || 8080;
+
+
+//   httpServer.listen(port);
+
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+
+//   cluster.on("exit", (worker) => {
+//     console.log(`Worker ${worker.process.pid} died`);
+//     cluster.fork();
+//   });
+// } else {
+//   console.log(`Worker ${process.pid} started`);
+
+//   const httpServer = http.createServer(app);
+//   const socketIo = require('./services/socketio');
+  
+//   socketIo.run(httpServer);
+// }

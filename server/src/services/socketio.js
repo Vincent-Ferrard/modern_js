@@ -4,6 +4,10 @@ const { Room } = require("../schema/room");
 const { User } = require("../schema/user");
 const { Message } = require("../schema/message");
 
+const redisAdapter = require("socket.io-redis");
+// var amqp_adapter = require('socket.io-amqp');
+const { setupWorker } = require("@socket.io/sticky");
+
 exports.run = (server) => {
   const io = new Server(server, {
     cors: {
@@ -13,15 +17,19 @@ exports.run = (server) => {
     }
   });
 
+  io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
+  // io.adapter(amqp_adapter('amqp://localhost'));
+
   io.on('connection', (socket) => {
-    console.log('a user is connected');
+    console.log(socket.handshake.query.username + ' is connected');
+    console.log("[connection] worker process : " + process.pid);
     User.findOneAndUpdate({username: socket.handshake.query.username}, {status: true}, (err, user) => {
       if (user) {
         let rooms = [];
         user.rooms.forEach((room) => {
           rooms.push(room._id);
         });
-        socket.to(rooms).emit('user connection', {
+        io.to(rooms).emit('user connection', {
           username: user.username,
           status: user.status
         });
@@ -33,14 +41,14 @@ exports.run = (server) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('a user disconnected');
+      console.log(socket.handshake.query.username + ' user disconnected');
       User.findOneAndUpdate({username: socket.handshake.query.username}, {status: false}, (err, user) => {
         if (user) {
           let rooms = [];
           user.rooms.forEach((room) => {
             rooms.push(room._id);
           });
-          socket.to(rooms).emit('user disconnection', {
+          io.to(rooms).emit('user disconnection', {
             username: user.username,
             status: user.status
           });
@@ -68,8 +76,9 @@ exports.run = (server) => {
                 if (message) {
                   message.seenBy = message.seenBy.filter((item) => item.id !== user.id);
                 }
-                lastMessage.seenBy.push({_id: user.id, username: user.username});
-                
+                if (lastMessage.seenBy.find((item) => item.id === user.id) === undefined)
+                  lastMessage.seenBy.push({_id: user.id, username: user.username});
+
                 io.to(roomId).emit("seenBy", {
                   messageUpdate: message,
                   lastMessage: lastMessage,
@@ -84,6 +93,7 @@ exports.run = (server) => {
     });
 
     socket.on('chat', (roomId, username, msg) => {
+      console.log("[chat] worker process : " + process.pid);
       Room.findOne({_id: roomId}, (err, room) => {
         if (room) {
           User.findOne({username: username}, (err, user) => {
@@ -97,7 +107,7 @@ exports.run = (server) => {
               });
               message.save((err, response) => {
                 if (!err)
-                  room.update({$push: {messages: message.id }}, (err, response) => {
+                  room.updateOne({$push: {messages: message.id }}, (err, response) => {
                     if (!err)
                       // io.to(roomId).emit('chat', user.username, msg, new Date(dateNow).toLocaleDateString());
                       io.to(roomId).emit('chat', {
@@ -119,4 +129,6 @@ exports.run = (server) => {
       });
     });
   });
+
+  setupWorker(io);
 }

@@ -2,8 +2,6 @@ import React from 'react';
 import { Nav, Button, NavDropdown } from 'react-bootstrap';
 import './Members.css';
 
-const USER = "20Cents";
-
 export default class Members extends React.Component {
 
   render() {

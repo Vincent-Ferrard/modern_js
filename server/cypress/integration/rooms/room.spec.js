@@ -36,5 +36,8 @@ context('Room', () => {
     cy.get(".promote")
       .last()
       .click();
+    
+    cy.get(".alert-success")
+      .should("contain", "The user has been promoted");
   });
 });

@@ -40,7 +40,7 @@ const UserController = {
         User.findOne({username: req.params.username}).populate("rooms oldRooms", "name")
         .then((user) => {
             if (!user)
-                res.json({message: "This user does not exist"});
+                res.json({error: "This user does not exist"});
             else
                 res.json({rooms: user.rooms, oldRooms: user.oldRooms});
         }).catch((err) => {
@@ -50,7 +50,7 @@ const UserController = {
     setStatus: (req, res) => {
         User.findOneAndUpdate({username: req.params.username}, {status: req.body.status}, (err, user) => {
             if (!user)
-                res.status(400).json({message: "This user does not exist"});
+                res.status(400).json({error: "This user does not exist"});
             else
                 res.json({status: user.status});
         });

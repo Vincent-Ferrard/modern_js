@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import {Container, Row, Col, InputGroup, FormControl } from "react-bootstrap";
+import { Alert, Container, Row, Col, InputGroup, FormControl } from "react-bootstrap";
 import { io } from "socket.io-client";
 
 import Rooms from './Rooms.jsx';
@@ -9,8 +9,6 @@ import Members from './Members.jsx';
 import { getRooms, removeMember, getMembers, getMessages, promoteUser, getUserData } from '../../services/RoomService.jsx';
 
 import './Room.css';
-
-const USER = "20Cents";
 
 let socket;
 
@@ -27,13 +25,15 @@ export default class Room extends React.Component {
       oldRooms: {},
       members: {members: [this.username = ""], owner: {username: ""}},
       messages: {},
-      message: ""
+      message: "",
+      success: "",
+      error: "",
     };
   }
 
   componentWillUnmount() {
     if (socket && socket.connected)
-      socket.disconnect();
+      socket.close();
   }
 
   async componentDidMount() {
@@ -68,6 +68,8 @@ export default class Room extends React.Component {
             socket = io.connect("http://localhost:8080", {withCredentials: true, query: "username=" + connectUser.username});
 
           socket.emit('join room', this.state.roomId);
+
+          this.setLastMessageRead();
 
           socket.on('chat', (message) => {
             this.setState({messages: {...this.state.messages, [Object.keys(this.state.messages).length]: message}});
@@ -153,8 +155,12 @@ export default class Room extends React.Component {
     event.preventDefault();
     if (usernameToPromote) {
       const res = await promoteUser(this.state.roomId, usernameToPromote);
-      if (res) {
-          socket.emit('promote user',this.state.roomId);
+      if (res.message) {
+        this.setState({success: res.message});
+
+        socket.emit('promote user',this.state.roomId);
+      } else if (res.error) {
+        this.setState({error: res.error});
       }
     }
   }
@@ -185,12 +191,12 @@ export default class Room extends React.Component {
   disconnect = (event) => {
     event.preventDefault();
     localStorage.removeItem("token");
-    socket.disconnect();
+    socket.close();
     this.props.history.push("/");
   }
 
   render() {
-    const { roomId, rooms, oldRooms, members, messages } = this.state;
+    const { roomId, rooms, oldRooms, members, messages, success, error } = this.state;
 
       var listMembers = <></>;
       var messageBar =  <></>;
@@ -223,13 +229,11 @@ export default class Room extends React.Component {
                               <FormControl
                                 id="input-form"
                                 placeholder="Send a message..."
+                                autoComplete="off"
                                 value={this.state.message}
                                 onChange={(event) => this.setState({message: event.target.value})}
                                 onKeyDown={(event) => event.keyCode === 13 ? this.sendMessage(event) : ''}
                               />
-                              {/* <InputGroup.Append>
-                                <Button variant="outline-light" onClick={(event) => this.sendMessage(event)}>Send</Button>
-                                </InputGroup.Append> */}
                             </InputGroup>
                           </Col>
                         </Row>
@@ -276,6 +280,16 @@ export default class Room extends React.Component {
                 {listMembers}
             </Row>
             {messageBar}
+            { success !== "" ? (
+              <Alert className="alert-message" variant="success" onClose={() => this.setState({success: ""})} dismissible>
+                <Alert.Heading>{success}</Alert.Heading>
+              </Alert>
+            ) : <></>}
+            { error !== "" ? (
+              <Alert className="alert-message" variant="danger" onClose={() => this.setState({success: ""})} dismissible>
+                <Alert.Heading>{error}</Alert.Heading>
+              </Alert>
+            ) : <></>}
           </Container>
         ) : (
           <Container fluid>
