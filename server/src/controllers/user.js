@@ -37,12 +37,12 @@ const UserController = {
         res.json(req.user);
     },
     allRooms: (req, res) => {
-        User.findOne({username: req.params.username}).populate("rooms", "name")
+        User.findOne({username: req.params.username}).populate("rooms oldRooms", "name")
         .then((user) => {
             if (!user)
                 res.json({message: "This user does not exist"});
             else
-                res.json({rooms: user.rooms});
+                res.json({rooms: user.rooms, oldRooms: user.oldRooms});
         }).catch((err) => {
             res.status(400).send(err);
         })

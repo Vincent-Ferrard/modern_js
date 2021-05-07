@@ -13,14 +13,13 @@ export default class Rooms extends React.Component {
       );
     });
 
-    var oldRooms = '';
-    if (this.props.oldRooms.length > 0) {
-      oldRooms = Object.keys(this.props.oldRooms).map(key => {
+    const oldRooms = Object.keys(this.props.oldRooms).map(key => {
+      return (
         <Nav.Item key={this.props.oldRooms[key]._id} className="rooms">
           <Nav.Link href={"/rooms/" + this.props.oldRooms[key]._id}>{this.props.oldRooms[key].name}</Nav.Link>
         </Nav.Item>
-      });
-    }
+      );
+    });
     return (
       <Nav className="col-md-2 d-md-block bg-dark sidebar" defaultActiveKey={"/rooms/" + this.props.roomId}>
         {rooms.length > 0 ? <div className="historic">Current Chat:</div> : <></>}
