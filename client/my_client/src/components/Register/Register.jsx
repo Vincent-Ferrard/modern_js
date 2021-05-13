@@ -1,4 +1,5 @@
 import React from 'react';
+import registerService from '../../services/RegisterService';
 
 export default class Register extends React.Component {
     constructor(props) {
@@ -12,7 +13,13 @@ export default class Register extends React.Component {
     }
 
     submit = async (event) => {
-
+        event.preventDefault();
+        const tmp = await registerService(this.state.email, this.state.name, this.state.password);
+        if (!tmp.token) {
+            this.setState({errorMessage: 'wrong informations'});
+        } else {
+            this.setState({errorMessage: 'confirmation email sent'});
+        }
     }
 
     render() {
@@ -20,8 +27,8 @@ export default class Register extends React.Component {
         <div className="container" id="box-position">
             <div className="card">
                 <article className="card-body">
-                <a href="/register" className="float-right btn btn-outline-primary">Sign up</a>
-                    <h4 className="card-title mb-4 mt-1">Sign in</h4>
+                <a href="/login" className="float-right btn btn-outline-primary">Sign in</a>
+                    <h4 className="card-title mb-4 mt-1">Register</h4>
                     <form method="POST" onSubmit={this.submit}>
                     <div className="form-group">
                             <label>Your email</label>
@@ -29,7 +36,7 @@ export default class Register extends React.Component {
                         </div>
                         <div className="form-group">
                             <label>Your name</label>
-                            <input name="name" className="form-control" placeholder="Name" type="text" value={this.state.email} onChange={(event) => this.setState({name: event.target.value})}/>
+                            <input name="name" className="form-control" placeholder="Name" type="text" value={this.state.name} onChange={(event) => this.setState({name: event.target.value})}/>
                         </div>
                         <div className="form-group">
                             <label>Your password</label>

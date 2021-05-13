@@ -21,7 +21,7 @@ export default class Login extends React.Component {
         } else {
             this.setState({errorMessage: 'Login successful'});
             localStorage.setItem("token", tmp.token); //a chaque arrivée sur la route connection, vérifier que un token n'est pas déjà existant
-            this.props.history.push("/rooms");    
+            this.props.history.push("/rooms");  
         }
         //renvoyer sur la route avec la liste des serveurs de l'utilisateurs
     }

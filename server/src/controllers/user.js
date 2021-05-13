@@ -1,10 +1,29 @@
 const { User } = require('../schema/user');
 const jwt = require('jsonwebtoken');
+const { transporter } = require('../services/nodemail');
 
 const UserController = {
     signup: (req, res) => {
-        console.log(req.body);
-        const user = new User({
+        const link = `localhost:3000/confirm/${req.body.email}`;
+        console.log("called api/user/signup");
+        User.findOne({'email': req.body.email}, async (err, user) => {
+            if (!user) {
+                await transporter.sendMail({
+                    from: process.env.SENDER_MAIL,
+                    to: req.body.email,
+                    subject: 'email confirmation modern chat',
+                    html: `<h1>Hello ${req.body.username}!</h1><br>
+                    <p>You're receiving this email with nodemailer!</p>
+                    <a href="${link}">Please click here</a>
+                    to validate your account.</p>
+                    <p>We hope you like our app! ;D</p>`
+                }).catch(console.error);
+                console.log('email successfully delivered');
+            } else {
+                console.log('email not delivered: account already created');
+            }
+        });
+        new User({
             email: req.body.email,
             username: req.body.username,
             password: req.body.password
@@ -12,6 +31,16 @@ const UserController = {
             if (err)
                 res.status(400).send(err);
             res.status(200).send(response);
+        })
+    },
+    confirm: (req, res) => {
+        User.findOne({'email': req.body.email}, async (err, user) => {
+            if (!user)
+                res.json({message: 'Confirmation failed, email not found. Maybe you took too long and your account has been deleted?'});
+            else {
+                await User.findOneAndUpdate({'email': req.body.email}, {status: true});
+                res.json({message: 'Email confirmed, welcome aboard'});
+            }
         })
     },
     signin: (req, res) => {

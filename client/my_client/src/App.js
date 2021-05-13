@@ -1,7 +1,9 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Register } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import { Room, Login, Register } from './components';
+import { Room, Login } from './components';
+import Register from './components/Register/Register';
+import Confirm from './components/Register/Confirm'
 
 function App() {
   return (
@@ -11,6 +13,7 @@ function App() {
       <Route path="/room/:roomId" component={Room} />
       <Route path="/rooms" component={Room} />
       <Route path="/login" component={Login} />
+      <Route path="/confirm/:user" component={Confirm} />
     </Router>
   );
 }

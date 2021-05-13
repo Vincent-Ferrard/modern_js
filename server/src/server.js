@@ -7,7 +7,7 @@ const MONGOURL = 'mongodb+srv://admin:AAleUri78rYmkfzI@cluster.zy0jq.mongodb.net
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: true, //
+    useFindAndModify: true,
     useCreateIndex: true
 }
 
