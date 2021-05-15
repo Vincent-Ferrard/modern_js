@@ -14,7 +14,7 @@ export default class Decline extends React.Component {
   async componentWillMount() {
     console.log("ok");
     const res = await declineInvite(this.state.roomId, this.state.inviteToken);
-    if (!res.message || res.message !== "You have join the room")
+    if (!res.message || res.message !== "You have declined the invitation to the room.")
       this.props.history.push("/");
     else
       this.setState({message: res.message})

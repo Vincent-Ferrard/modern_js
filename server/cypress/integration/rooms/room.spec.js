@@ -28,16 +28,16 @@ context('Room', () => {
       .should("contain", "new cypress")
   });
 
-  it("Try to promote a user to owner", function() {
-    cy.get(".members")
-      .last()
-      .click();
+  // it("Try to promote a user to owner", function() {
+  //   cy.get(".members")
+  //     .last()
+  //     .click();
     
-    cy.get(".promote")
-      .last()
-      .click();
+  //   cy.get(".promote")
+  //     .last()
+  //     .click();
     
-    cy.get(".alert-success")
-      .should("contain", "The user has been promoted");
-  });
+  //   cy.get(".alert-success")
+  //     .should("contain", "The user has been promoted");
+  // });
 });

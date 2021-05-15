@@ -10,7 +10,9 @@ export default class AddMember extends React.Component {
     this.state = {
       roomId: props.match.params.roomId ?? null,
       input: "",
-      errorMessage: "",
+      // errorMessage: "",
+      success: "",
+      error: ""
     }
   }
 
@@ -20,7 +22,9 @@ export default class AddMember extends React.Component {
     console.log(res);
     this.setState({input: ""});
     if (res.message)
-      this.setState({errorMessage: res.message});
+      this.setState({success: res.message});
+    else if (res.error)
+      this.setState({error: res.error});
   }
 
   render() {
@@ -36,8 +40,10 @@ export default class AddMember extends React.Component {
                         <label>User Email / Username</label>
                         <input name="email" className="form-control" placeholder="Email / Username" type="text" value={this.state.input} onChange={(event) => this.setState({input: event.target.value})}/>
                     </div>
+                    { this.state.error !== '' ? (<div className="alert alert-danger" role="alert">{this.state.error}</div>) : <></> }
+                    { this.state.success !== '' ? (<div className="alert alert-success" role="alert">{this.state.success}</div>) : <></> }
                     {/* {this.state.errorMessage === 'Wrong informations' ? (<div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>) : <></>*/}
-                    {this.state.errorMessage !== '' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>}
+                    {/* {this.state.errorMessage !== '' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>} */}
                     <div className="form-group">
                         <button type="submit" className="btn btn-primary btn-block"> Send invitation </button>
                     </div>                                                           

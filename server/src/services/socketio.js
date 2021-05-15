@@ -5,7 +5,6 @@ const { User } = require("../schema/user");
 const { Message } = require("../schema/message");
 
 const redisAdapter = require("socket.io-redis");
-// var amqp_adapter = require('socket.io-amqp');
 const { setupWorker } = require("@socket.io/sticky");
 
 exports.run = (server) => {
@@ -18,7 +17,6 @@ exports.run = (server) => {
   });
 
   io.adapter(redisAdapter({ host: "localhost", port: 6379 }));
-  // io.adapter(amqp_adapter('amqp://localhost'));
 
   io.on('connection', (socket) => {
     console.log(socket.handshake.query.username + ' is connected');

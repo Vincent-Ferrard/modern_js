@@ -14,7 +14,7 @@ export default class Accept extends React.Component {
   async componentWillMount() {
     console.log("ok");
     const res = await acceptInvite(this.state.roomId, this.state.inviteToken);
-    if (!res.message || res.message !== "You have join the room")
+    if (!res.message || res.message !== "You have join the room.")
       this.props.history.push("/");
     else
       this.setState({message: res.message})

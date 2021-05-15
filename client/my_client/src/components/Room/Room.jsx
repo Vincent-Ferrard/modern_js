@@ -249,7 +249,7 @@ export default class Room extends React.Component {
                     <p className="message-content">{messages[key].content}</p>
                     {messages[key].seenBy.length > 0 ? (
                       <p className="text-right message-seenBy"> Vu par <i>{
-                      messages[key].seenBy.map((element) => {if (element.username == connectUser.username) {
+                      messages[key].seenBy.map((element) => {if (element.username === connectUser.username) {
                         stop = 1;
                       }
                       return element.username + " ";

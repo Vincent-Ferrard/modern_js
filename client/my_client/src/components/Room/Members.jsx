@@ -12,7 +12,7 @@ export default class Members extends React.Component {
             <div>
               <NavDropdown key={this.props.members.owner._id} title={
                 <>
-                  <i className={`status-icon ${this.props.members.owner.status ? 'connected' : ''}`}></i>
+                  <i className={`status-icon ${this.props.members.owner.username === this.props.connectUser.username || this.props.members.owner.status ? 'connected' : ''}`}></i>
                   {this.props.members.owner.username} - (Owner)
                 </>
               } className="members">
@@ -23,7 +23,7 @@ export default class Members extends React.Component {
                   return (
                     <NavDropdown key={this.props.members.members[key]._id} title={
                       <>
-                        <i className={`status-icon ${this.props.members.members[key].status ? 'connected' : ''}`}></i>
+                        <i className={`status-icon ${this.props.members.members[key].username === this.props.connectUser.username || this.props.members.members[key].status ? 'connected' : ''}`}></i>
                         {this.props.members.members[key].username}
                       </>
                     } className="members">
@@ -40,7 +40,7 @@ export default class Members extends React.Component {
                 })
               }
               <div id="add-members-button">
-                <Button variant="outline-light" className="right-margin" onClick={(event) => this.props.toInvite(event)}>Add a member</Button>
+                <Button variant="outline-light" className="add-member right-margin" onClick={(event) => this.props.toInvite(event)}>Add a member</Button>
                 <Button variant="outline-danger" onClick={(event) => this.props.toLeave(event)}>Leave group</Button>
               </div>
             </div>
