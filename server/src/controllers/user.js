@@ -4,10 +4,9 @@ const { transporter } = require('../services/nodemail');
 
 const UserController = {
     signup: (req, res) => {
-        const link = `localhost:3000/confirm/${req.body.email}`;
-        console.log("called api/user/signup");
         User.findOne({'email': req.body.email}, async (err, user) => {
             if (!user) {
+                const link = `localhost:3000/confirm/${req.body.email}`;
                 await transporter.sendMail({
                     from: process.env.SENDER_MAIL,
                     to: req.body.email,
@@ -35,11 +34,12 @@ const UserController = {
     },
     confirm: (req, res) => {
         User.findOne({'email': req.body.email}, async (err, user) => {
-            if (!user)
-                res.json({message: 'Confirmation failed, email not found. Maybe you took too long and your account has been deleted?'});
-            else {
-                await User.findOneAndUpdate({'email': req.body.email}, {status: true});
+            if (!user) {
+                res.json({message: 'Confirmation failed, email not found. Be sure to confirm your account in the 12 hours following your inscription'});
+            } else {
+                await User.findOneAndUpdate({'email': req.body.email}, {validated: true});
                 res.json({message: 'Email confirmed, welcome aboard'});
+                console.log(`${req.body.email} confirmed`);
             }
         })
     },

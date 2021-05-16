@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    validated: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 userSchema.pre('save', function(next) {
