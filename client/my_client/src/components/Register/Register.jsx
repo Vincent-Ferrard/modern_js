@@ -16,10 +16,13 @@ export default class Register extends React.Component {
         console.log("register");
         event.preventDefault();
         const tmp = await registerService(this.state.email, this.state.name, this.state.password);
-        if (!tmp.token) {
-            this.setState({errorMessage: 'wrong informations'});
+        if (!tmp.message) {
+            this.setState({errorMessage: 'Wrong informations'});
         } else {
-            this.setState({errorMessage: 'confirmation email sent'});
+            this.setState({errorMessage: 'Confirmation email sent'});
+            setTimeout(() => {
+                this.props.history.push("/login");
+            }, 500);
         }
     }
 
@@ -44,7 +47,7 @@ export default class Register extends React.Component {
                             <input name="password" className="form-control" placeholder="Password" type="password" value={this.state.password} onChange={(event) => this.setState({password: event.target.value})}/>
                         </div>
                         {this.state.errorMessage === 'Wrong informations' ? (<div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>) : <></>}
-                        {this.state.errorMessage === 'Login successful' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>}
+                        {this.state.errorMessage === 'Confirmation email sent' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>}
                         <div className="form-group">
                             <button type="submit" className="btn btn-primary btn-block">Register</button>
                         </div>                                                           

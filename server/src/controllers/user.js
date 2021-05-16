@@ -32,7 +32,7 @@ const UserController = {
             console.log(err);
             if (err)
                 res.status(400).send(err);
-            res.status(200).send(response);
+            res.status(200).send({message: 'User register.'});
         })
     },
     confirm: (req, res) => {
