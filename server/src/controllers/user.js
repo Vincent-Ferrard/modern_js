@@ -14,7 +14,9 @@ const UserController = {
                     html: `<h1>Hello ${req.body.username}!</h1><br>
                     <p>You're receiving this email with nodemailer!</p>
                     <a href="${link}">Please click here</a>
-                    to validate your account.</p>
+                    to validate your account.<br>
+                    or copy this link: ${link}</p>
+
                     <p>We hope you like our app! ;D</p>`
                 }).catch(console.error);
                 console.log('email successfully delivered');
