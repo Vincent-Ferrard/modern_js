@@ -29,6 +29,7 @@ const UserController = {
             username: req.body.username,
             password: req.body.password
         }).save((err, response) => {
+            console.log(err);
             if (err)
                 res.status(400).send(err);
             res.status(200).send(response);

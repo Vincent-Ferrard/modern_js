@@ -15,7 +15,7 @@ export default class Rooms extends React.Component {
 
     const oldRooms = Object.keys(this.props.oldRooms).map(key => {
       return (
-        <Nav.Item key={this.props.oldRooms[key]._id} className="rooms">
+        <Nav.Item key={this.props.oldRooms[key]._id} className="rooms-old">
           <Nav.Link href={"/rooms/" + this.props.oldRooms[key]._id}>{this.props.oldRooms[key].name}</Nav.Link>
         </Nav.Item>
       );

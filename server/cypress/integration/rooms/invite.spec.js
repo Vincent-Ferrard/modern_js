@@ -42,8 +42,8 @@ context('Room Invitation', () => {
 
   it("Try to add a member when I have not at least one room shared", function() {
     cy.get("input[name='email']")
-      .type("test", { delay: 100 })
-      .should("have.value", "test");
+      .type("newtest", { delay: 100 })
+      .should("have.value", "newtest");
     
     cy.get("button[type='submit']")
       .click();

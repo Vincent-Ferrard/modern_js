@@ -6,7 +6,7 @@ export default async function registerService(email, name, password) {
         },
         body : JSON.stringify({
           email: email,
-          name: name,
+          username: name,
           password: password,
         })
     });

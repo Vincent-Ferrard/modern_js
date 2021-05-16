@@ -8,7 +8,7 @@ context('Room', () => {
       }
     });
     cy.get(".rooms > a")
-      .first()
+      .last()
       .click();
   });
 

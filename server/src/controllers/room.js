@@ -96,7 +96,7 @@ const RoomController = {
                 if (!room)
                   res.status(400).send(err);
                 else {
-                  user.updateOne({$push: {rooms: room.id }}, (err, response) => {
+                  user.updateOne({$push: {rooms: room.id }, $pull: {oldRooms: room.id}}, (err, response) => {
                     if (err)
                       res.status(400).send(err);
                     else {
@@ -192,7 +192,7 @@ const RoomController = {
                 if (!room)
                   res.status(400).send(err);
                 else {
-                  user.updateOne({$push: {rooms: room.id }}, (err, response) => {
+                  user.updateOne({$push: {rooms: room.id }, $pull: {oldRooms: room.id}}, (err, response) => {
                     if (err)
                       res.status(400).send(err);
                     else {

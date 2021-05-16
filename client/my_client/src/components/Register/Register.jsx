@@ -13,6 +13,7 @@ export default class Register extends React.Component {
     }
 
     submit = async (event) => {
+        console.log("register");
         event.preventDefault();
         const tmp = await registerService(this.state.email, this.state.name, this.state.password);
         if (!tmp.token) {
