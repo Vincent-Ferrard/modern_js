@@ -35,5 +35,4 @@ export default class Rooms extends React.Component {
       </Nav>
     );
   }
-
 }

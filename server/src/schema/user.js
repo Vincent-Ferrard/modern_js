@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema({
     //     data: String,
     //     default: ''
     // }
+    validated: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 userSchema.pre('save', function(next) {

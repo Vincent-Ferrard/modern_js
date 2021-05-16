@@ -49,5 +49,4 @@ export default class Members extends React.Component {
       </Nav>
     );
   }
-
 }

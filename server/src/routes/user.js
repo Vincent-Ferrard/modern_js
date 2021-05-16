@@ -5,6 +5,7 @@ const userCtrl = require('../controllers/user');
 const { authenticateToken } = require('../middlewares/auth');
 
 router.post('/signup', userCtrl.signup);
+router.patch('/confirm/:user', userCtrl.confirm)
 router.post('/signin', userCtrl.signin);
 
 router.get('/:username/rooms', authenticateToken, userCtrl.allRooms);

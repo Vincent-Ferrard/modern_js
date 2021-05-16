@@ -191,7 +191,8 @@ export default class Room extends React.Component {
   disconnect = (event) => {
     event.preventDefault();
     localStorage.removeItem("token");
-    socket.close();
+    if (socket && socket.connected)
+      socket.close();
     this.props.history.push("/");
   }
 
