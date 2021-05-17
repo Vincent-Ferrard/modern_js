@@ -4,7 +4,7 @@ context('Room', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/rooms', {
       onBeforeLoad: function (window) {
-          window.localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF4ZWwuZGFubmlvbkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkF4YSJ9.ab8pWfsKy-BTeIkFAHWsKpbs0v-ij2kVoDKOoT1AqKU");
+          window.localStorage.setItem('token', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmNlbnQuZmVycmFyZEBlcGl0ZWNoLmV1IiwidXNlcm5hbWUiOiIyMENlbnRzIn0.ED-9KBS0grztWGcZvU1yZIzaZ9NiLBqHWDor7bznEJs");
       }
     });
     cy.get(".rooms > a")
