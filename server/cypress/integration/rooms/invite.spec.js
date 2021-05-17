@@ -30,14 +30,14 @@ context('Room Invitation', () => {
 
   it("Try to add a member when I have at least one room shared", function() {
     cy.get("input[name='email']")
-      .type("Axa", { delay: 100 })
-      .should("have.value", "Axa");
+      .type("scarlett.johns3@ethereal.email", { delay: 100 })
+      .should("have.value", "scarlett.johns3@ethereal.email");
     
     cy.get("button[type='submit']")
       .click();
 
     cy.get(".alert-success")
-      .should("contain", "Axa has been added to the room.");
+      .should("contain", "Scarlett Johns has been added to the room.");
   });
 
   it("Try to add a member when I have not at least one room shared", function() {

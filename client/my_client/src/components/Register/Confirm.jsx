@@ -20,7 +20,7 @@ export default class Confirm extends React.Component {
 
     render() {
         return (
-            <div className="container" id="box-position">
+            <div className="container text-white" id="box-position">
                 <div>Account confirmed {this.state.user}, click <a href='/login'> here </a>to get redirected</div>
             </div>
         );
