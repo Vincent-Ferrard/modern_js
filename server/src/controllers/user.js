@@ -22,6 +22,7 @@ const UserController = {
                 console.log('email successfully delivered');
             } else {
                 console.log('email not delivered: account already created');
+                return res.status(400).send({error: 'User already exist'})
             }
         });
         new User({
@@ -32,7 +33,8 @@ const UserController = {
             console.log(err);
             if (err)
                 res.status(400).send(err);
-            res.status(200).send({message: 'User register.'});
+            else
+                res.status(200).send({message: 'User register.'});
         })
     },
     confirm: (req, res) => {

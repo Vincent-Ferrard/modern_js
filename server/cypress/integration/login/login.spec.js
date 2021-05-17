@@ -19,12 +19,12 @@ context('Login', () => {
 
   it("Try to connect with a false account.", function() {
     cy.get("input[name='email']")
-      .type("hello@hello.com", { delay: 100 })
-      .should("have.value", "hello@hello.com");
+      .type("nouser@nouser.com", { delay: 100 })
+      .should("have.value", "nouser@nouser.com");
     
     cy.get("input[name='password']")
-      .type("hello", { delay: 100 })
-      .should("have.value", "hello");
+      .type("nouser", { delay: 100 })
+      .should("have.value", "nouser");
 
     cy.get("button")
       .click();

@@ -9,20 +9,30 @@ export default class Register extends React.Component {
             name: '',
             password: '',
             errorMessage: '',
+            successMessage: '',
         }
     }
 
     submit = async (event) => {
         console.log("register");
         event.preventDefault();
-        const tmp = await registerService(this.state.email, this.state.name, this.state.password);
-        if (!tmp.message) {
+        if (this.state.email === "" || this.state.name === "" || this.state.password === "")
             this.setState({errorMessage: 'Wrong informations'});
-        } else {
-            this.setState({errorMessage: 'Confirmation email sent'});
-            setTimeout(() => {
-                this.props.history.push("/login");
-            }, 500);
+        else if (this.state.password.length < 6)
+            this.setState({errorMessage: 'The password must have at least 6 characters'});
+        else {
+            const tmp = await registerService(this.state.email, this.state.name, this.state.password);
+            if (!tmp.message) {
+                if (tmp.error && tmp.error === "User already exist")
+                    this.setState({errorMessage: tmp.error});
+                else
+                    this.setState({errorMessage: 'Wrong informations'});
+            } else {
+                this.setState({successMessage: 'Confirmation email sent'});
+                setTimeout(() => {
+                    this.props.history.push("/login");
+                }, 500);
+            }
         }
     }
 
@@ -46,8 +56,8 @@ export default class Register extends React.Component {
                             <label>Your password</label>
                             <input name="password" className="form-control" placeholder="Password" type="password" value={this.state.password} onChange={(event) => this.setState({password: event.target.value})}/>
                         </div>
-                        {this.state.errorMessage === 'Wrong informations' ? (<div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>) : <></>}
-                        {this.state.errorMessage === 'Confirmation email sent' ? (<div className="alert alert-success" role="alert">{this.state.errorMessage}</div>) : <></>}
+                        {this.state.errorMessage !== '' ? (<div className="alert alert-danger" role="alert">{this.state.errorMessage}</div>) : <></>}
+                        {this.state.successMessage !== '' ? (<div className="alert alert-success" role="alert">{this.state.successMessage}</div>) : <></>}
                         <div className="form-group">
                             <button type="submit" className="btn btn-primary btn-block">Register</button>
                         </div>                                                           
